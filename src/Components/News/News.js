@@ -15,34 +15,30 @@ export default function News() {
         getTrendingNews();
     }, []);
 
-    function getTrendingNews() {
+    async function getTrendingNews() {
         const options = {
             method: 'GET',
-            url: 'https://bing-news-search1.p.rapidapi.com/news',
+            url: 'https://google-news22.p.rapidapi.com/v1/topic-headlines',
             params: {
-                category: 'Health',
-                cc: 'gb',
-                safeSearch: 'Off',
-                textFormat: 'Raw'
+              country: 'in',
+              language: 'en',
+              topic: 'health'
             },
             headers: {
-                'X-BingApis-SDK': 'true',
-                'X-RapidAPI-Key': '320f7ae65dmsh19b108a0f306364p1cebf3jsn4805c8d23c92',
-                'X-RapidAPI-Host': 'bing-news-search1.p.rapidapi.com'
+              'x-rapidapi-key': '320f7ae65dmsh19b108a0f306364p1cebf3jsn4805c8d23c92',
+              'x-rapidapi-host': 'google-news22.p.rapidapi.com'
             }
-        };
+          };
 
-        axios
-            .request(options)
-            .then(function (response) {
-                console.log(response, 'hello');
-                setData(response.data.value);
-                setLoading(false);
-            })
-            .catch(function (error) {
-                console.error(error);
-                setLoading(false);
-            });
+        try {
+            const response = await axios.request(options);
+            console.log(response.data.data);
+            setData(response.data.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false); 
+        }
     }
 
     return (
@@ -56,16 +52,16 @@ export default function News() {
                         <div className='row'>
                             {data.map(function (element) {
                                 return (
-                                    <div key={element.name} className='col-md-4 d-flex justify-content-center my-3'>
+                                    <div key={element.url} className='col-md-4 d-flex justify-content-center my-3'>
                                         <div className='card' style={{ width: '18rem' }}>
                                             <img
-                                                src={element.image?.thumbnail.contentUrl ? element.image?.thumbnail.contentUrl : 'https://media.istockphoto.com/id/1182477852/photo/breaking-news-world-news-with-map-backgorund.jpg?s=612x612&w=0&k=20&c=SQfmzF39HZJ_AqFGosVGKT9iGOdtS7ddhfj0EUl0Tkc='}
+                                                src={element.thumbnail? element.thumbnail : 'https://media.istockphoto.com/id/1182477852/photo/breaking-news-world-news-with-map-backgorund.jpg?s=612x612&w=0&k=20&c=SQfmzF39HZJ_AqFGosVGKT9iGOdtS7ddhfj0EUl0Tkc='}
                                                 className='card-img-top img-fluid'
                                                 alt='...'
                                                 style={{ width: 287, height: 163 }}
                                             />
                                             <div className='card-body'>
-                                                <h5 className='card-title'>{element.name}</h5>
+                                                <h5 className='card-title'>{element.title}</h5>
                                                 <p className='card-text'>{element.description}</p>
                                                 <a href={element.url} target='_blank' rel='noopener noreferrer' className='btn btn-primary'>
                                                     Read more
